@@ -11,7 +11,7 @@ function TaskList({ taskData, onDeleted, onToggleDone, onEdited, editItem }) {
     onEdited: PropTypes.func.isRequired,
     editItem: PropTypes.func.isRequired,
   }
-  console.log(1235)
+  console.log('123asdas5asd')
   const elements = taskData.map((item) => (
     <Task
       id={item.id}
