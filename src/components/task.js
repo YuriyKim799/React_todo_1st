@@ -60,7 +60,7 @@ export default class Task extends Component {
             <span className="description" onClick={onToggleDone} role="button" tabIndex={0} onKeyDown={onToggleDone}>
               {description}
             </span>
-            <span className="created">created {result} ago</span>
+            <span className="created">created {result} ago !</span>
           </label>
           <button aria-label="edit" type="button" className="icon icon-edit" onClick={onEdited} />
           <button aria-label="delete" type="button" className="icon icon-destroy" onClick={onDeleted} />
