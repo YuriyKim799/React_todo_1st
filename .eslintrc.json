@@ -12,6 +12,7 @@
       "plugin:import/recommended",
       "airbnb", "airbnb/hooks",
       "plugin:react/jsx-runtime",
+      "plugin:prettier/recommended",
       "prettier"
     ],
     "parserOptions": {
@@ -26,8 +27,7 @@
       "indent": ["error", 2, { "SwitchCase": 1 }],
       "no-plusplus":"off",
       "prettier/prettier": ["error",{
-        "singleQuote": true,
-        "parser": "flow"
+        "singleQuote": true
       }],
       "linebreak-style": [0, "unix"],
       "semi": ["error", "never"],
