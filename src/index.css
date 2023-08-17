@@ -192,6 +192,10 @@ body {
 	margin: 0 0 0 43px;
 }
 
+.show {
+	display: inline-block;
+}
+
 .todo-list li.editing .view {
 	display: none;
 }
@@ -246,8 +250,13 @@ IE and Edge requires *everything* to be escaped to render, so we do that instead
 	color: gray;
 	width: 100px;
 }
+
 .time-span {
 	margin-left: 5px;
+}
+
+.description-hidden {
+	display: none;
 }
 
 .todo-list li label .title {

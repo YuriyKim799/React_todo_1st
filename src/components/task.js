@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react'
 import { formatDistanceToNow } from 'date-fns'
 import PropTypes from 'prop-types'
@@ -17,26 +18,64 @@ export default class Task extends Component {
 
   state = {
     textValue: this.props.description,
-    minutes: 0,
-    seconds: 0,
-    timer: 0,
+    timer: this.props.timer,
+    minutes: this.props.minutes,
+    seconds: this.props.seconds,
+    showTimeSpan: true,
+    showTimesGone: true,
+    timerSwitch: false,
   }
 
-  onSubmit = (event) => {
-    event.preventDefault()
-    this.props.editItem(this.props.id, this.state.textValue, this.props.edit)
+  componentDidMount() {
+    if (this.state.minutes === 0 && this.state.seconds === 0) {
+      this.setState({
+        timerSwitch: true,
+      })
+    }
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.minutes !== prevState.minutes || this.state.seconds !== prevState.seconds) {
+      if (this.state.seconds === 0 && this.state.minutes === 0) {
+        clearInterval(this.state.timer)
+        this.onDidUpdate()
+      }
+    }
+  }
+
+  componentWillUnmount() {
+    localStorage.setItem(
+      this.props.id,
+      JSON.stringify({
+        minutes: this.state.minutes,
+        seconds: this.state.seconds,
+      })
+    )
+  }
+
+  onDidUpdate = () => {
     this.setState({
-      textValue: '',
+      showTimeSpan: false,
+      showTimesGone: false,
     })
   }
 
-  onLabelChange = (event) => {
-    this.setState({
-      textValue: event.target.value,
-    })
+  onStartMinus = () => {
+    clearInterval(this.state.timer)
+    this.state.timer = setInterval(() => {
+      this.setState(({ seconds }) => ({
+        seconds: seconds - 1,
+      }))
+      if (this.state.seconds === 0) {
+        this.setState(({ minutes }) => ({
+          seconds: 59,
+          minutes: minutes - 1,
+        }))
+      }
+    }, 1000)
   }
 
-  onStart = () => {
+  onStartPlus = () => {
     clearInterval(this.state.timer)
     this.state.timer = setInterval(() => {
       this.setState(({ seconds }) => ({
@@ -55,9 +94,24 @@ export default class Task extends Component {
     clearInterval(this.state.timer)
   }
 
+  onSubmit = (event) => {
+    event.preventDefault()
+    this.props.editItem(this.props.id, this.state.textValue, this.props.edit)
+    this.setState({
+      textValue: '',
+    })
+  }
+
+  onLabelChange = (event) => {
+    this.setState({
+      textValue: event.target.value,
+    })
+  }
+
   render() {
     const { description, onDeleted, onEdited, id, onToggleDone, done, edit, timeOfCreate } = this.props
-    const { minutes, seconds, timer, textValue } = this.state
+
+    const { textValue, minutes, seconds, timer, showTimeSpan, showTimesGone, timerSwitch } = this.state
     let classNames = ''
     let mark = false
 
@@ -85,14 +139,19 @@ export default class Task extends Component {
               {description}
             </span>
 
-            <span className="description">
-              <button className="icon icon-play" type="button" aria-label="play" onClick={this.onStart} />
+            <span className={showTimeSpan ? 'description' : 'description-hidden'}>
+              <button
+                className="icon icon-play"
+                type="button"
+                aria-label="play"
+                onClick={timerSwitch ? this.onStartPlus : this.onStartMinus}
+              />
               <button className="icon icon-pause" type="button" aria-label="pause" onClick={this.onPause} />
               <span className="time-span">
                 {minutes < 10 ? `0${minutes}` : minutes}:{seconds < 10 ? `0${seconds}` : seconds}
               </span>
             </span>
-
+            <span className={showTimesGone ? 'hidden' : 'show'}>ВРЕМЯ ВЫШЛО</span>
             <span className="description">created {result} ago</span>
           </label>
 

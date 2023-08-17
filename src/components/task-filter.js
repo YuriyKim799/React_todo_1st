@@ -18,7 +18,8 @@ export default class TaskFilter extends Component {
 
     const btnEls = this.buttons.map((item) => {
       const isActive = filter === item.name
-      const clazz = isActive ? 'selected' : ''
+
+      const clazz = isActive ? 'selected' : 'хуйня'
       return (
         <li key={item.name}>
           <button type="submit" className={clazz} onClick={() => onFilterChange(item.name)}>
