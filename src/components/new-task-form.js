@@ -8,11 +8,21 @@ export default class NewTaskForm extends Component {
 
   state = {
     label: '',
+    minutes: '',
+    seconds: '',
   }
 
-  onLabelChange = (e) => {
+  onHandleChange = (e) => {
+    if (e.target.name === 'minutes' || e.target.name === 'seconds') {
+      const a = Number(e.target.value)
+      if (Number.isNaN(a) || Number.isNaN(a)) {
+        // eslint-disable-next-line no-alert
+        alert('введите число')
+        return
+      }
+    }
     this.setState({
-      label: e.target.value,
+      [e.target.name]: e.target.value,
     })
   }
 
@@ -30,21 +40,45 @@ export default class NewTaskForm extends Component {
   clearField = () => {
     this.setState({
       label: '',
+      minutes: '',
+      seconds: '',
     })
   }
 
   onSubmit = (e) => {
     e.preventDefault()
+    const { label, minutes, seconds } = this.state
     const time = this.onTimeCreated()
-    this.props.onItemAdded(this.state.label, time)
+    this.props.onItemAdded(label, time, minutes, seconds)
     this.clearField()
   }
 
   render() {
-    const { label } = this.state
+    const { label, minutes, seconds } = this.state
     return (
-      <form onSubmit={this.onSubmit}>
-        <input className="new-todo" placeholder="What needs to be done?" value={label} onChange={this.onLabelChange} />
+      <form className="new-todo-form" onSubmit={this.onSubmit}>
+        <input
+          name="label"
+          className="new-todo"
+          placeholder="What needs to be done?"
+          value={label}
+          onChange={this.onHandleChange}
+        />
+        <input
+          name="minutes"
+          className="new-todo-form__timer"
+          value={minutes}
+          placeholder="Min"
+          onChange={this.onHandleChange}
+        />
+        <input
+          name="seconds"
+          className="new-todo-form__timer"
+          value={seconds}
+          placeholder="Sec"
+          onChange={this.onHandleChange}
+        />
+        <input type="submit" hidden />
       </form>
     )
   }

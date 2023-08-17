@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react'
 import { createRoot } from 'react-dom/client'
 
@@ -10,10 +11,31 @@ import './index.css'
 export default class App extends Component {
   maxId = 1
 
+  timer = 1
+
   state = {
     todoData: [],
     filter: 'all', // All, Done, Active
   }
+
+  // onStart = () => {
+  //   clearInterval(this.state.timer)
+  //   this.timer = setInterval(() => {
+  //     this.setState(({ seconds }) => ({
+  //       seconds: seconds + 1,
+  //     }))
+  //     if (this.state.seconds === 59) {
+  //       this.setState(({ minutes }) => ({
+  //         seconds: 0,
+  //         minutes: minutes + 1,
+  //       }))
+  //     }
+  //   }, 1000)
+  // }
+
+  // onPause = () => {
+  //   clearInterval(this.state.timer)
+  // }
 
   deleteItem = (id) => {
     this.setState(({ todoData }) => {
@@ -44,13 +66,20 @@ export default class App extends Component {
     })
   }
 
-  addItem = (text, time) => {
+  addItem = (text, time, minutes, seconds) => {
+    const min = Number(minutes)
+    const sec = Number(seconds)
     if (text === '') {
+      return
+    }
+    if (min > 59 || sec > 59) {
+      // eslint-disable-next-line no-alert
+      alert('вы ввели некорректное время')
       return
     }
 
     this.setState(({ todoData }) => {
-      const newArr = [...todoData, this.createTodoItem(text, time)]
+      const newArr = [...todoData, this.createTodoItem(text, time, minutes, seconds)]
       return {
         todoData: newArr,
       }
@@ -120,17 +149,21 @@ export default class App extends Component {
     })
   }
 
-  createTodoItem(text, time) {
+  createTodoItem(text, time, minutes, seconds) {
     return {
       description: text,
       done: false,
       edit: false,
       id: this.maxId++,
       timeOfCreate: time,
+      seconds: +seconds,
+      minutes: +minutes,
+      timer: this.timer++,
     }
   }
 
   render() {
+    // const { todoData, filter, minutes, seconds, timer } = this.state
     const { todoData, filter } = this.state
     const doneCount = todoData.filter((el) => !el.done).length
     const filteredItems = this.filter(todoData, filter)
@@ -148,6 +181,11 @@ export default class App extends Component {
             onToggleDone={this.onToggleDone}
             onEdited={this.onEdited}
             editItem={this.editItem}
+            // minutes={minutes}
+            // seconds={seconds}
+            // timer={timer}
+            // onStart={this.onStart}
+            // onPause={this.onPause}
           />
           <Footer
             doneCount={doneCount}
